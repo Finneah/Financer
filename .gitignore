@@ -1,5 +1,4 @@
 node_modules
 builds
-app/database/financer.db
-.DS_Store
-
+app/.DS_Store
+package-lock.json
