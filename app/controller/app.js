@@ -5,9 +5,9 @@
  * @module app/controller/app.js
  */
 
-const electron = require("electron");
-const { app, BrowserWindow, ipcMain } = electron;
-const is = require("electron-is");
+const electron = require('electron');
+const {app, BrowserWindow, ipcMain} = electron;
+const is = require('electron-is');
 let mainWindow;
 /**
  * @description create Window
@@ -19,13 +19,13 @@ function createMainWindow() {
         height: 625,
         minHeight: 135,
         title: app.getName(),
-        vibrancy: "appearance-based"
+        vibrancy: 'appearance-based'
     };
 
     mainWindow = new BrowserWindow(windowOptions);
 
-    mainWindow.loadURL("file://" + __dirname + "./../view/main.html");
-    mainWindow.once("ready-to-show", () => {
+    mainWindow.loadURL('file://' + __dirname + './../view/main.html');
+    mainWindow.once('ready-to-show', () => {
         mainWindow.show();
     });
 
@@ -33,27 +33,26 @@ function createMainWindow() {
         mainWindow.webContents.openDevTools();
     }
 
-    mainWindow.on("closed", function() {
+    mainWindow.on('closed', function() {
         mainWindow = null;
     });
 }
 
-app.on("ready", createMainWindow);
+app.on('ready', createMainWindow);
 
-app.on("close", function() {
-    
-    if (process.platform !== "darwin") {
+app.on('close', function() {
+    if (process.platform !== 'darwin') {
         app.quit();
     }
 });
 
-app.on("window-all-closed", () => {
-    if (process.platform !== "darwin") {
+app.on('window-all-closed', () => {
+    if (process.platform !== 'darwin') {
         app.quit();
     }
 });
 
-app.on("activate", function() {
+app.on('activate', function() {
     if (mainWindow === null) {
         createMainWindow();
     }
@@ -65,30 +64,35 @@ app.on("activate", function() {
  * @param {string} text Dialog-Box Text
  */
 exports.showMessageDialog = (window, title, text, type) => {
-    const { dialog } = require("electron");
+    const {dialog} = require('electron');
     dialog.showMessageBox(window, {
         type: type,
         title: title,
         message: text,
-        buttons: ["Ok"],
+        buttons: ['Ok'],
         noLink: false
     });
 };
 
-ipcMain.on("request-update-year-in-main-window", (event, arg) => {
-    mainWindow.webContents.send("switch-year-and-month", arg);
+ipcMain.on('request-update-year-in-main-window', (event, arg) => {
+    mainWindow.webContents.send('switch-year-and-month', arg);
 });
 
-ipcMain.on("give-year-to-second-window", (event, arg) => {
-    secondWindow = new BrowserWindow({ parent: mainWindow, modal: true, show: true, frame:false });
-    secondWindow.loadURL("file://" + __dirname + "./../view/newEntry.html");
+ipcMain.on('give-year-to-second-window', (event, arg) => {
+    secondWindow = new BrowserWindow({
+        parent: mainWindow,
+        modal: true,
+        show: true,
+        frame: false
+    });
+    secondWindow.loadURL('file://' + __dirname + './../view/newEntry.html');
 
     if (is.dev()) {
         secondWindow.webContents.openDevTools();
     }
 
     secondWindow.setTitle(arg);
-    secondWindow.once("ready-to-show", () => {
+    secondWindow.once('ready-to-show', () => {
         secondWindow.show();
     });
 });
