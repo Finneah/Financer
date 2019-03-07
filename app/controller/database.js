@@ -6,17 +6,18 @@
  */
 
 module.exports = DATABASE;
-const electron = require("electron");
+const electron = require('electron');
 const app = electron.app ? electron.app : electron.remote.app;
-const path = require("path");
-const appPath = path.resolve(app.getAppPath() + "/../../");
-const userDataPath = path.resolve(app.getPath("userData"));
-const fs = require("fs");
-const is = require("electron-is");
+const path = require('path');
+const appPath = path.resolve(app.getAppPath() + '/../../');
+const userDataPath = path.resolve(app.getPath('userData'));
+const fs = require('fs');
+const is = require('electron-is');
 const dbPath = checkedDBPath();
-const configDBPath = dbPath.replace("financer.db", "appConfig.db");
+console.log(dbPath);
+const configDBPath = dbPath.replace('financer.db', 'appConfig.db');
 
-const Database = require("better-sqlite3");
+const Database = require('better-sqlite3');
 /**
  * @description Main Function to init this Modul
  */
@@ -37,15 +38,15 @@ function createDB() {
     try {
         var db = new Database(dbPath);
         var create =
-            "CREATE TABLE IF NOT EXISTS `entrys` (" +
-            "`id`	INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT," +
-            "`name`	TEXT NOT NULL," +
-            "`amount`	REAL NOT NULL," +
-            "`category`	TEXT," +
-            "`typ`	TEXT NOT NULL," +
-            "`intervalId`	INTEGER NOT NULL," +
-            "`periodFrom`	TEXT NOT NULL," +
-            "`periodTill`	TEXT);";
+            'CREATE TABLE IF NOT EXISTS `entrys` (' +
+            '`id`	INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,' +
+            '`name`	TEXT NOT NULL,' +
+            '`amount`	REAL NOT NULL,' +
+            '`category`	TEXT,' +
+            '`typ`	TEXT NOT NULL,' +
+            '`intervalId`	INTEGER NOT NULL,' +
+            '`periodFrom`	TEXT NOT NULL,' +
+            '`periodTill`	TEXT);';
         var stmt = db.prepare(create);
         stmt.run();
         db.close();
@@ -71,7 +72,7 @@ DATABASE.prototype.getEntrys = function(year) {
 function getEntrys(year) {
     try {
         var db = new Database(dbPath);
-        var get = "SELECT * FROM entrys ORDER BY name ASC";
+        var get = 'SELECT * FROM entrys ORDER BY name ASC';
         var stmt = db.prepare(get);
         var all = stmt.all();
         db.close();
@@ -100,7 +101,8 @@ DATABASE.prototype.saveEntry = entry => {
 function saveEntry(entry) {
     try {
         var db = new Database(dbPath);
-        var insert = "INSERT INTO entrys VALUES (null, @name, @amount, @category,@typ,@intervalId,@periodFrom,@periodTill);";
+        var insert =
+            'INSERT INTO entrys VALUES (null, @name, @amount, @category,@typ,@intervalId,@periodFrom,@periodTill);';
         var stmt = db.prepare(insert);
 
         var insertEntry = stmt.run({
@@ -128,7 +130,7 @@ function updateEntry(entry) {
         var db = new Database(dbPath);
 
         var update =
-            "UPDATE entrys SET name=@name, amount=@amount, category=@category,typ=@typ,intervalId=@intervalId,periodFrom=@periodFrom,periodTill=@periodTill WHERE id=@id;";
+            'UPDATE entrys SET name=@name, amount=@amount, category=@category,typ=@typ,intervalId=@intervalId,periodFrom=@periodFrom,periodTill=@periodTill WHERE id=@id;';
         var stmt = db.prepare(update);
 
         var updateEntry = stmt.run({
@@ -167,7 +169,7 @@ function deleteEntry(id) {
         createDB();
         var db = new Database(dbPath);
 
-        var deleteEntry = "DELETE FROM entrys WHERE id=@id;";
+        var deleteEntry = 'DELETE FROM entrys WHERE id=@id;';
         var stmt = db.prepare(deleteEntry);
         var result = stmt.run({
             id: id
@@ -187,10 +189,10 @@ function createConfigDB() {
     try {
         var db = new Database(configDBPath);
         var create =
-            "CREATE TABLE IF NOT EXISTS `config` (" +
-            "`id`	INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT," +
-            "`code`	TEXT NOT NULL," +
-            "`isActive`	INT NOT NULL);";
+            'CREATE TABLE IF NOT EXISTS `config` (' +
+            '`id`	INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,' +
+            '`code`	TEXT NOT NULL,' +
+            '`isActive`	INT NOT NULL);';
 
         var stmt = db.prepare(create);
         stmt.run();
@@ -216,7 +218,7 @@ DATABASE.prototype.getConfigs = () => {
 function getConfigs() {
     try {
         var db = new Database(configDBPath);
-        var get = "SELECT * FROM config";
+        var get = 'SELECT * FROM config';
         var stmt = db.prepare(get);
         var all = stmt.all();
         db.close();
@@ -231,14 +233,14 @@ function getConfigs() {
  */
 function createConfigs() {
     var db = new Database(configDBPath);
-    var insert = "INSERT INTO config VALUES (null, @code, @isActive);";
+    var insert = 'INSERT INTO config VALUES (null, @code, @isActive);';
     var stmt = db.prepare(insert);
     var insertEntry = stmt.run({
-        code: "FIRSTSTART",
+        code: 'FIRSTSTART',
         isActive: 1
     });
     var insertEntry = stmt.run({
-        code: "TUTORIAL",
+        code: 'TUTORIAL',
         isActive: 1
     });
     db.close();
@@ -250,13 +252,13 @@ function createConfigs() {
 function checkedDBPath() {
     createDBPath();
     if (is.dev()) {
-        return "./app/database/financer.db";
+        return './app/database/financer.db';
     } else {
         switch (process.platform) {
-            case "darwin":
-                return appPath + "/app/database/financer.db";
-            case "win32":
-                return userDataPath + "/app/database/financer.db";
+            case 'darwin':
+                return appPath + '/database/financer.db';
+            case 'win32':
+                return userDataPath + '/database/financer.db';
             default:
                 break;
         }
@@ -269,14 +271,14 @@ function checkedDBPath() {
 function createDBPath() {
     if (!is.dev()) {
         switch (process.platform) {
-            case "darwin":
-                if (!fs.existsSync(appPath + "/database")) {
-                    fs.mkdirSync(appPath + "/database");
+            case 'darwin':
+                if (!fs.existsSync(appPath + '/database')) {
+                    fs.mkdirSync(appPath + '/database');
                 }
                 break;
-            case "win32":
-                if (!fs.existsSync(userDataPath + "/database")) {
-                    fs.mkdirSync(userDataPath + "/database");
+            case 'win32':
+                if (!fs.existsSync(userDataPath + '/database')) {
+                    fs.mkdirSync(userDataPath + '/database');
                 }
                 break;
 
