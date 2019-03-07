@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Source: controller/config.js</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+
+    <h1 class="page-title">Source: controller/config.js</h1>
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>/**
+ * @fileoverview Config
+ * @author Jennifer Schnaible &lt;jennifer.schnaible86@gmail.com> 02.05.2018
+ * @description CONTROLLER for config
+ * @module app/controller/config.js
+ */
+module.exports = CONFIG;
+
+const electron = require("electron");
+let app = electron.app ? electron.app : electron.remote.app;
+
+CONFIG.year = {};
+CONFIG.period = {};
+CONFIG.interval = {};
+
+/**
+ * @description Main Function to init this Modul
+ */
+function CONFIG() {
+    setConfigs();
+}
+
+/**
+ * @description set the Config for interval, period and year
+ */
+function setConfigs() {
+    CONFIG.interval = {
+        0: "einmalig",
+        1: "jeden Monat",
+        2: "alle 2 Monate",
+        3: "alle 3 Monate",
+        6: "alle 6 Monate",
+        12: "jährlich"
+    };
+    CONFIG.period = {
+        min: "2015-01-01",
+        max: "2030-12-31",
+        format: "yyyy-mm-dd"
+    };
+    CONFIG.year = {
+        min: 2015,
+        max: 2030
+    };
+    CONFIG.months = {
+        Jan: 1,
+        Feb: 2,
+        März: 3,
+        March: 3,
+        Apr: 4,
+        Mai: 5,
+        May: 5,
+        Jun: 6,
+        Jul: 7,
+        Aug: 8,
+        Sep: 9,
+        Okt: 10,
+        Oct: 10,
+        Nov: 11,
+        Dez: 12,
+        Dec: 12
+    };
+    CONFIG.appConfig = getConfigsFromDB();
+}
+
+/**
+ * @description GLOBAL FUNCTION get the interval settings
+ */
+CONFIG.prototype.getInterval = () => {
+    return CONFIG.interval;
+};
+
+/**
+ * @description GLOBAL FUNCTION get the period settings
+ */
+CONFIG.prototype.getPeriod = () => {
+    return CONFIG.period;
+};
+
+/**
+ * @description GLOBAL FUNCTION get the year settings
+ */
+CONFIG.prototype.getYear = () => {
+    return CONFIG.year;
+};
+
+/**
+ * @description GLOBAL FUNCTION get the month settings
+ */
+CONFIG.prototype.getMonths = () => {
+    return CONFIG.months;
+};
+
+/**
+ * @description GLOBAL FUNCTION convert the Date for input date
+ * @param {string} year
+ * @param {string} month
+ * @param {string} day
+ * @returns {string} date
+ */
+CONFIG.prototype.convertDate = (year, month, day) => {
+    try {
+        if (CONFIG.months.hasOwnProperty(month)) {
+            month = CONFIG.months[month].toString();
+        }
+        parseInt(month) &lt; 10 ? (month = 0 + month) : null;
+        parseInt(day) &lt; 10 ? (day = 0 + day) : null;
+        return year + "-" + month + "-" + day;
+    } catch (error) {
+        ERRORHANDLER.handleError(error, error.message);
+    }
+};
+
+/**
+ * @description return the Currency Symbol
+ */
+CONFIG.prototype.getCurrency = () => {
+    if (app.getLocale() == "de") {
+        return "€";
+    }
+    return "$";
+};
+
+function getConfigsFromDB() {
+    return DATABASE.getConfigs();
+}
+</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="app_classes_Category.module_js.html">app/classes/Category.js</a></li><li><a href="app_classes_Entry.module_js.html">app/classes/Entry.js</a></li><li><a href="app_classes_EntryPage.module_js.html">app/classes/EntryPage.js</a></li><li><a href="app_classes_MainPage.module_js.html">app/classes/MainPage.js</a></li><li><a href="app_controller_app.module_js.html">app/controller/app.js</a></li><li><a href="app_controller_config.module_js.html">app/controller/config.js</a></li><li><a href="app_controller_database.module_js.html">app/controller/database.js</a></li><li><a href="app_controller_entry.module_js.html">app/controller/entry.js</a></li><li><a href="app_controller_errorhandling.module_js.html">app/controller/errorhandling.js</a></li><li><a href="app_controller_i18n.module_js.html">app/controller/i18n.js</a></li><li><a href="app_controller_module.module_js.html">app/controller/module.js</a></li><li><a href="app_renderer_entryPage.module_js.html">app/renderer/entryPage.js</a></li><li><a href="app_renderer_mainPage.module_js.html">app/renderer/mainPage.js</a></li><li><a href="app_renderer_translator.module_js.html">app/renderer/translator.js</a></li></ul><h3>Classes</h3><ul><li><a href="app_classes_Category.module_js-Category.html">Category</a></li><li><a href="app_classes_Entry.module_js-Entry.html">Entry</a></li><li><a href="app_classes_EntryPage.module_js-EntryPage.html">EntryPage</a></li><li><a href="app_classes_MainPage.module_js-MainPage.html">MainPage</a></li></ul>
+</nav>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.5.5</a> on Tue May 15 2018 13:56:24 GMT+0200 (Mitteleuropäische Sommerzeit)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>

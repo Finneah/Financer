@@ -1,0 +1,63 @@
+{
+    "mainPage": {
+        "revenueTitle": "Revenues",
+        "expensesTitle": "Expenses",
+        "overviewTitle":"Overview",
+        "restTitle": "Rest",
+        "month_1": "Jan",
+        "month_2": "Feb",
+        "month_3": "March",
+        "month_4": "Apr",
+        "month_5": "May",
+        "month_6": "Jun",
+        "month_7": "Jul",
+        "month_8": "Aug",
+        "month_9": "Sep",
+        "month_10": "Oct",
+        "month_11": "Nov",
+        "month_12": "Dec",
+        "deleteEntryTitle": "delete",
+        "deleteEntryText": "Are you sure you want to delete the entry completely?"
+    },
+    "entryPage": {
+        "revenue": "Revenue",
+        "expenses": "Expence",
+        "newNameLabel": "Description",
+        "newAmountLabel": "Amount",
+        "newCategoryLabel": "Category",
+        "newPeriodStartLabel": "From",
+        "newPeriodEndLabel": "Till",
+        "newIntervalLabel": "Interval",
+        "newIntervalOption_0": "one Time",
+        "saveBtn": "Save",
+        "closeBtn": "Close"
+    },
+    "global": {
+        "new": "new",
+        "category_home": "Home",
+        "category_food": "Foods",
+        "category_cosmetics": "Cosmetic",
+        "category_transport": "Drives",
+        "category_travel": "Trips",
+        "category_car": "Car",
+        "category_entertainment": "Entertainment",
+        "category_education": "Education",
+        "category_hobby": "Hobby",
+        "category_pets": "Pets",
+        "category_gifts": "Gifts",
+        "category_family": "Family",
+        "category_work": "Work",
+        "category_others": "Others",
+        "category_health": "Health",
+        "category_charity": "Charity",
+        "category_saveUp": "Save up",
+        "category_bills": "Bills",
+        "category_insurance": "Insurance",
+        "category_salary": "Salary",
+        "cancel": "Cancel",
+        "ok": "Ok"
+    },
+    "error": {
+        "unknownError": "An unknown error has occurred."
+    }
+}

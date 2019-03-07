@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="./../resources/css/financer.min.css">
+    <link href="./../../node_modules/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet">
+    <script src="./../resources/fontawesome-free-5.0.9/svg-with-js/js/fontawesome-all.min.js"></script>
+    <link href="./../../node_modules/bootstrap/dist/js/bootstrap.min.js">
+    <style>
+    </style>
+    <script>
+
+        require('./../renderer/init.js');
+        const { ipcRenderer } = require('electron');
+
+        ipcRenderer.on('switch-year-and-month', (event, arg) => {
+            let year = document.getElementById("year");
+            year.innerHTML = arg.year;
+            var month = document.getElementById("Month[" + CONFIG.getMonths()[arg.month] + "]")
+            month.dispatchEvent(new Event("click"));
+        });
+    </script>
+    <title>financer</title>
+</head>
+
+<body>
+    <div id="Content">
+        <div class="row top border-bottom">
+            <div class="col">
+                <button type="button" class="btn btn-outline-secondary btn-sm" id="lastYearBtn">
+                    <i class="fas fa-chevron-circle-left"></i>
+                </button>
+            </div>
+            <div class="col-sm-10 text-center font-weight-bold" id="year"></div>
+            <div class="col text-right">
+                <button type="button" class="btn btn-outline-secondary btn-sm" id="nextYearBtn">
+                    <i class="fas fa-chevron-circle-right"></i>
+                </button>
+            </div>
+        </div>
+        <div class="row middle" id="months">
+        </div>
+
+        <div class="row bottom">
+            <div class="col" id="revenueCol">
+                <div class="row middletop border" id="revenueHeader">
+                    <div class="col-sm-11 text-center font-weight-bold ">
+                        <span id="revenueTitle"></span>
+
+                    </div>
+                    <div class="col-sm-1">
+                        <button class="btn btn-primary btn-sm float-right" type="button" id="newRevenue">
+                            <i class="fas fa-plus-circle"></i>
+                        </button>
+                    </div>
+                </div>
+                <div class="col revenueGridEntry" id="revenueGridId">
+                    <ul class="list-group list-group-flush" id="revenueUl"></ul>
+                </div>
+                <div class="row middletop border" id="expenditureHeader ">
+                    <div class="col-sm-11 text-center font-weight-bold ">
+                        <span id="expensesTitle"></span>
+
+                    </div>
+                    <div class="col-sm-1">
+                        <button class="btn btn-primary btn-sm float-right" type="button" id="newExpenses">
+
+                            <i class="fas fa-plus-circle"></i>
+                        </button>
+                    </div>
+                </div>
+                <div class="col expensesGridEntry" id="expensesGridId">
+                    <ul class="list-group list-group-flush" id="expensesUl"></ul>
+                </div>
+
+                <div class="row middletop border" id="overviewHeader ">
+                    <div class="col-sm-11 text-center font-weight-bold ">
+                        <span id="overviewTitle">Übersicht</span>
+                    </div>
+                    <div class="col-sm-1"></div>
+                </div>
+
+                <div class=" col overviewGridEntry" id="overviewGridId">
+                    <ul class="list-group list-group-flush" id="overviewUl">
+
+                    </ul>
+
+                </div>
+            </div>
+
+        </div>
+        <br>
+        <div class="row progress">
+            <div class="col">
+                <div class="progress" id="progressOverview" style="height: 20px">
+                </div>
+            </div>
+        </div>
+    </div>
+
+</body>
+
+</html>

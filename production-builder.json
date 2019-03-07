@@ -1,0 +1,30 @@
+{
+    "appId": "financer.financer",
+    "productName": "financer",
+    "asar": true,
+    "directories": {
+        "output": "./builds/production"
+    },
+    "win": {
+        "target": "nsis",
+        "icon": "./app/resources/icons/financer.ico",
+        "legalTrademarks": "Jennifer Schnaible"
+    },
+    "nsis": {
+        "oneClick": false,
+        "deleteAppDataOnUninstall": false,
+        "allowToChangeInstallationDirectory": true,
+        "displayLanguageSelector": true,
+        "language": 1031,
+        "installerLanguages": ["en_US", "de_DE"]
+    },
+    "mac": {
+        "category": "public.app-category.finance",
+        "target": ["dmg", "pkg"],
+        "icon": "./app/resources/icons/financer.icns"
+    },
+    "linux": {
+        "target": ["AppImage", "deb"],
+        "icon": "./app/resources/icons/"
+    }
+}

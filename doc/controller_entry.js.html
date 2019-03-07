@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Source: controller/entry.js</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+
+    <h1 class="page-title">Source: controller/entry.js</h1>
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>/**
+ * @fileoverview ENTRY
+ * @author Jennifer Schnaible &lt;jennifer.schnaible86@gmail.com> 22.03.2018
+ * @description CONTROLLER for ENTRY, create dbs and tables. Controll statements
+ * @module app/controller/entry.js
+ */
+
+module.exports = ENTRY;
+const electron = require("electron");
+const app = electron.app ? electron.app : electron.remote.app;
+const remote = electron.remote;
+const { ipcRenderer } = require("electron");
+typ = "";
+
+CLASS_CATEGORY = new (require("./../classes/Category"))();
+NEW_CATEGORY = window.CLASS_CATEGORY.createClassCategory();
+CLASS_ENTRY = new (require("./../classes/Entry"))();
+NEW_ENTRY = CLASS_ENTRY.createClassEntry();
+const DATABASE = new (require("./database.js"))();
+/**
+ * @description Main Function when init Modul
+ */
+function ENTRY() {}
+
+/**
+ * @description GLOBAL FUNCTION prepare the Page
+ */
+ENTRY.prototype.initEntryWindow = () => {
+    try {
+        var BrowserWindow = remote.BrowserWindow;
+        wins = BrowserWindow.getAllWindows();
+        wins.forEach(win => {
+            if (win.isModal()) {
+                attr = JSON.parse(win.getTitle());
+                typ = attr.typ;
+                year = attr.year;
+                month = attr.month;
+                attr.selectedEntry != undefined ? (SELECTEDENTRY = attr.selectedEntry) : (SELECTEDENTRY = null);
+                attr.selectedEntry != undefined ? (SELECTEDCATEGORY = attr.selectedEntry.category) : (SELECTEDCATEGORY = "");
+            }
+        });
+        CATEGORYS = new NEW_CATEGORY();
+        CATEGORYS.setIcons();
+    } catch (error) {
+        ERRORHANDLER.handleError(error, error.message);
+    }
+};
+
+/**
+ * @description close the newEntryWindow and refesh MainWindow
+ */
+function close() {
+    try {
+        const electron = require("electron");
+        const remote = electron.remote;
+        var BrowserWindow = remote.BrowserWindow;
+        wins = BrowserWindow.getAllWindows();
+        wins[1].reload();
+        wins[0].close();
+    } catch (error) {
+        throw error;
+    }
+}
+/**
+ * @description GLOABEL FUNCTION for saveEntry()
+ * @param {object} entry
+ */
+ENTRY.prototype.saveEntry = entry => {
+    saveEntry(entry);
+};
+
+/**
+ * @description prepareEntrys to save in DB
+ * @param {Object} entry
+ */
+function saveEntry(entry) {
+    try {
+        var newEntry = createNewEntry(entry);
+        if (DATABASE.saveEntry(newEntry)) {
+            let Data = {
+                year: year,
+                month: month
+            };
+            ipcRenderer.send("request-update-year-in-main-window", Data);
+            ENTRYPAGE.close();
+        } else {
+            //error zeigen
+        }
+    } catch (error) {
+        throw error;
+    }
+}
+
+ENTRY.prototype.deleteEntry = entryId => {
+    if (DATABASE.deleteEntry(entryId)) {
+        MAINPAGE.deleteElement(entryId);
+    }
+};
+
+/**
+ * @description create a new Entry Object from ENtry class
+ * @param {object} entry
+ */
+function createNewEntry(entry) {
+    entry.amount = parseFloat(entry.amount);
+    return new NEW_ENTRY(entry);
+}
+
+/**
+ *@description GLOBAL FUNCTION load the Entrys from DB
+ * @param {string} year
+ * @param {string} month
+ */
+ENTRY.prototype.loadEntrys = year => {
+    //entrys = new ENTRY.....
+    try {
+        var entrys = DATABASE.getEntrys(parseInt(year));
+        var loadedEntrys = [];
+        entrys.forEach(entry => {
+            entry.from = entry.periodFrom;
+            entry.till = entry.periodTill;
+            if (checkFromTill(entry)) {
+                loadedEntrys.push(new NEW_ENTRY(entry));
+            }
+        });
+        return loadedEntrys;
+    } catch (error) {
+        throw error;
+    }
+};
+
+/**
+ * @description check from and till for the interval
+ * @param {object} entry
+ */
+function checkFromTill(entry) {
+    var year = MAINPAGE_ELEMENTS.getSelectedYear().selectedYearInnerHTML;
+    var month = MAINPAGE_ELEMENTS.getSelectedMonth().selectedMonth;
+    var date = new Date(year, CONFIG.getMonths()[month], 0);
+    var from = new Date(entry.from);
+
+    var dateMonth = date.getMonth() + 1;
+    var till = new Date(entry.till);
+    if (entry.intervalId == 0) {
+        if (date.getFullYear() == from.getFullYear() &amp;&amp; date.getMonth() + 1 == from.getMonth() + 1) {
+            return true;
+        }
+    } else {
+        if (date >= from &amp;&amp; date &lt;= till) {
+            if (dateMonth == from.getMonth() + 1 &amp;&amp; date.getFullYear() == from.getFullYear()) {
+                return true;
+            }
+            switch (entry.intervalId) {
+                case 1:
+                    return true;
+                case 12:
+                    if (dateMonth == from.getMonth() + 1) {
+                        if (date.getFullYear() >= from.getFullYear() &amp;&amp; date.getFullYear() &lt;= till.getFullYear()) {
+                            return true;
+                        }
+                    }
+
+                default:
+                    return calcShowMonth(entry.intervalId, 12 - (from.getMonth() + 1), dateMonth, from);
+                    break;
+            }
+        }
+    }
+    return false;
+}
+
+function test(interval, repeat, dateMonth) {
+    for (var j = 0; j &lt; 12; j++) {
+        showMod(interval, repeat, j);
+    }
+}
+/**
+ * @description calc show Entry in Month
+ * @param {interval} interval
+ * @param {interval} repeat
+ * @param {int} dateMonth
+ * @returns {bool}
+ */
+function calcShowMonth(interval, repeat, dateMonth, from) {
+    for (var i = 0; i &lt;= repeat; i++) {
+        var checksum = from.getMonth() + 1 &lt; dateMonth ? from.getMonth() + 1 : 1;
+        if (i % interval == 0 &amp;&amp; i + checksum == dateMonth) {
+            return true;
+        }
+    }
+    return false;
+}
+
+/**
+ * @description GLOBAL FUNCTION for round()
+ * @param {float} wert
+ */
+ENTRY.prototype.round = wert => {
+    return round(wert);
+};
+
+/**
+ *@description round wert to dezimal with 2
+ * @param {float} wert
+ */
+function round(wert) {
+    wert = parseFloat(wert);
+    if (!wert) return 0;
+    var umrechnungsfaktor = Math.pow(10, 2);
+    return Math.round(wert * umrechnungsfaktor) / umrechnungsfaktor;
+}
+</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="app_classes_Category.module_js.html">app/classes/Category.js</a></li><li><a href="app_classes_Entry.module_js.html">app/classes/Entry.js</a></li><li><a href="app_classes_EntryPage.module_js.html">app/classes/EntryPage.js</a></li><li><a href="app_classes_MainPage.module_js.html">app/classes/MainPage.js</a></li><li><a href="app_controller_app.module_js.html">app/controller/app.js</a></li><li><a href="app_controller_config.module_js.html">app/controller/config.js</a></li><li><a href="app_controller_database.module_js.html">app/controller/database.js</a></li><li><a href="app_controller_entry.module_js.html">app/controller/entry.js</a></li><li><a href="app_controller_errorhandling.module_js.html">app/controller/errorhandling.js</a></li><li><a href="app_controller_i18n.module_js.html">app/controller/i18n.js</a></li><li><a href="app_controller_module.module_js.html">app/controller/module.js</a></li><li><a href="app_renderer_entryPage.module_js.html">app/renderer/entryPage.js</a></li><li><a href="app_renderer_mainPage.module_js.html">app/renderer/mainPage.js</a></li><li><a href="app_renderer_translator.module_js.html">app/renderer/translator.js</a></li></ul><h3>Classes</h3><ul><li><a href="app_classes_Category.module_js-Category.html">Category</a></li><li><a href="app_classes_Entry.module_js-Entry.html">Entry</a></li><li><a href="app_classes_EntryPage.module_js-EntryPage.html">EntryPage</a></li><li><a href="app_classes_MainPage.module_js-MainPage.html">MainPage</a></li></ul>
+</nav>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.5.5</a> on Tue May 15 2018 13:56:24 GMT+0200 (Mitteleuropäische Sommerzeit)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>
