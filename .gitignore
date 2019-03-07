@@ -1,1 +1,4 @@
 node_modules
+builds
+app/database/financer.db
+.DS_Store
