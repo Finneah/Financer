@@ -2,3 +2,4 @@ node_modules
 builds
 app/.DS_Store
 package-lock.json
+doc/*
