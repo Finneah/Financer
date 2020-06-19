@@ -33,14 +33,14 @@ function createMainWindow() {
         mainWindow.webContents.openDevTools();
     }
 
-    mainWindow.on('closed', function() {
+    mainWindow.on('closed', function () {
         mainWindow = null;
     });
 }
 
 app.on('ready', createMainWindow);
 
-app.on('close', function() {
+app.on('close', function () {
     if (process.platform !== 'darwin') {
         app.quit();
     }
@@ -52,7 +52,7 @@ app.on('window-all-closed', () => {
     }
 });
 
-app.on('activate', function() {
+app.on('activate', function () {
     if (mainWindow === null) {
         createMainWindow();
     }
